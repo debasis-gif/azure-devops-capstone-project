@@ -19,8 +19,8 @@ stages:
     - task: Docker@2
       displayName: Build and Push an image
       inputs:
-        containerRegistry: 'in28min-docker-hub'
-        repository: 'in28min/currency-exchange-devops'
+        containerRegistry: 'dsa-docker-hub'
+        repository: 'debasisp12345678/currency-exchange-devops'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
         tags: '$(tag)'
@@ -36,8 +36,8 @@ stages:
         publishLocation: 'Container'
 
 # Build
-# Build Docker
-# Push Docker => 100
+# Build Docker image
+# Push Docker image
 # Copy Files to Staging Directory
 # Publish
 - stage: Deploy
@@ -60,9 +60,9 @@ stages:
         kubernetesServiceConnection: 'aws-kubernetes-cluster-service-connection'
         namespace: 'default'
         manifests: '$(System.ArtifactsDirectory)/configuration/kubernetes/deployment.yaml'
-        containers: in28min/currency-exchange-devops:$(tag)
+        containers: debasisp12345678/currency-exchange-devops:$(tag)
 
 # Deploy
 # Download 
-# image:100 => Deploy to K8S 
+# image:tag => Deploy to K8S 
 # apply - kubectl apply -f deployment.yaml

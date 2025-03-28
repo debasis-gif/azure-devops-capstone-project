@@ -1,15 +1,15 @@
 # aws --version
-# aws eks --region us-east-1 update-kubeconfig --name in28minutes-cluster
+# aws eks --region ap-southeast-1 update-kubeconfig --name kalkey-cluster
 # Uses default VPC and Subnet. Create Your Own VPC and Private Subnets for Prod Usage.
-# terraform-backend-state-in28minutes-123
-# AKIA4AHVNOD7OOO6T4KI
+# terraform-backend-state-kalkey-123
+# dsa43-test -> AKIAWT3Y7LSYEELRX36B
 
 
 terraform {
   backend "s3" {
     bucket = "mybucket" # Will be overridden from build
     key    = "path/to/my/key" # Will be overridden from build
-    region = "us-east-1"
+    region = "ap-southeast-1"
   }
 }
 
@@ -18,11 +18,11 @@ resource "aws_default_vpc" "default" {
 }
 
 data "aws_eks_cluster" "example" {
-   name = "in28minutes-cluster"
+   name = "kalkey-cluster"
  }
 
 data "aws_eks_cluster_auth" "example" {
-  name = "in28minutes-cluster"
+  name = "kalkey-cluster"
 }
 
 #Get token to connect to Kubernetes
@@ -33,17 +33,16 @@ provider "kubernetes" {
 }
 
 
-module "in28minutes-cluster" {
+module "kalkey-cluster" {
   source  = "terraform-aws-modules/eks/aws"
   version = "19.15.3"
 
-  cluster_name    = "in28minutes-cluster"
+  cluster_name    = "kalkey-cluster"
   cluster_version = "1.29"
 
-  subnet_ids         = ["subnet-0ba16627", "subnet-02db6b4a", "subnet-e08479ba"] #CHANGE # Donot choose subnet from us-east-1e
+  subnet_ids         = ["subnet-084434d0d9ae9ae64", "subnet-0e6d0e49f0c3c9e5d", "subnet-060b20ee750943f5e"] #CHANGE # subnets for Singapore
   #subnets = data.aws_subnet_ids.subnets.ids
   vpc_id          = aws_default_vpc.default.id
-  #vpc_id         = "vpc-1234556abcdef"
 
   //Newly added entry to allow connection to the api server
   //Without this change error in step 163 in course will not go away
@@ -110,5 +109,5 @@ resource "kubernetes_secret" "example" {
 
 # Needed to set the default region
 provider "aws" {
-  region  = "us-east-1"
+  region  = "ap-southeast-1"
 }

@@ -1,4 +1,4 @@
-package com.in28minutes.microservices.currencyexchangeservice.util.environment;
+package com.kalkey.microservices.currencyexchangeservice.util.environment;
 
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
