@@ -114,5 +114,5 @@ module "kalkey-cluster" {
 # Needed to set the default region
 provider "aws" {
   version = "~> 5.8"
-  region  = "us-east-1"
+  region  = "ap-southeast-1"
 }
