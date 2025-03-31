@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket = "mybucket" # Will be overridden from build
     key    = "path/to/my/key" # Will be overridden from build
-    region = "ap-southeast-1"
+    region = "us-east-1"
   }
 }
 
@@ -113,5 +113,6 @@ module "kalkey-cluster" {
 
 # Needed to set the default region
 provider "aws" {
-  region  = "ap-southeast-1"
+  version = "~> 5.8"
+  region  = "us-east-1"
 }
