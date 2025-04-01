@@ -9,7 +9,7 @@ terraform {
   backend "s3" {
     bucket = "mybucket" # Will be overridden from build
     key    = "path/to/my/key" # Will be overridden from build
-    region = "ap-southeast-1"
+    region = "us-east-1"
   }
 }
 
@@ -35,10 +35,10 @@ provider "kubernetes" {
 
 module "kalkey-cluster" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.15.3"
+  version = "~> 20.0"
 
   cluster_name    = "kalkey-cluster"
-  cluster_version = "1.29"
+  cluster_version = "1.32"
 
   subnet_ids         = ["subnet-084434d0d9ae9ae64", "subnet-0e6d0e49f0c3c9e5d", "subnet-060b20ee750943f5e"] #CHANGE # subnets for Singapore
   #subnets = data.aws_subnet_ids.subnets.ids
@@ -49,7 +49,7 @@ module "kalkey-cluster" {
   cluster_endpoint_public_access  = true
 
   eks_managed_node_group_defaults = {
-    ami_type = "AL2_x86_64"
+    ami_type = "AL2023_x86_64_STANDARD"
 
   }
 
@@ -57,7 +57,7 @@ module "kalkey-cluster" {
     one = {
       name = "node-group-1"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t2.medium"]
 
       min_size     = 1
       max_size     = 3
@@ -67,7 +67,7 @@ module "kalkey-cluster" {
     two = {
       name = "node-group-2"
 
-      instance_types = ["t3.small"]
+      instance_types = ["t2.medium"]
 
       min_size     = 1
       max_size     = 2
