@@ -1,9 +1,9 @@
+#
 # aws --version
 # aws eks --region ap-southeast-1 update-kubeconfig --name kalkey-cluster
 # Uses default VPC and Subnet. Create Your Own VPC and Private Subnets for Prod Usage.
 # terraform-backend-state-kalkey-123
-# dsa43-test -> AKIAWT3Y7LSYEELRX36B
-
+#
 
 terraform {
   backend "s3" {
@@ -14,47 +14,48 @@ terraform {
 }
 
 resource "aws_default_vpc" "default" {
-
 }
 
-### Uncomment this section after cluster creation line numbers 25 to 31 ###
-#data "aws_eks_cluster" "example" {
-#   name = "kalkey-cluster"
-# }
-
-#data "aws_eks_cluster_auth" "example" {
+### Uncomment this section after cluster creation ###
+# data "aws_eks_cluster" "example" {
 #  name = "kalkey-cluster"
 #}
-### Uncomment this section after cluster creation ###
 
+# data "aws_eks_cluster_auth" "example" {
+#  name = "kalkey-cluster"
+#}
+
+### Uncomment this section after cluster creation - take out the "#" ###
 provider "kubernetes" {
-### Uncomment this section after cluster creation line numbers 36 to 38###
+### Uncomment this section after cluster creation - take out the "#"  ###
+#  version                = "1.11.3"    // newly added property
 #  host                   = data.aws_eks_cluster.example.endpoint
 #  cluster_ca_certificate = base64decode(data.aws_eks_cluster.example.certificate_authority[0].data)
 #  token                  = data.aws_eks_cluster_auth.example.token
+#  load_config_file       = false      // newly added property
 ### Uncomment this section after cluster creation ###
 }
 
-
 module "kalkey-cluster" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "~> 20.31"
+  version = "~> 20.31"   // changed to the version no. according to source module
 
   cluster_name    = "kalkey-cluster"
-  cluster_version = "1.32"
+  cluster_version = "1.32"   // changed to the latest K8S cluster version 
 
   subnet_ids         = ["subnet-084434d0d9ae9ae64", "subnet-0e6d0e49f0c3c9e5d", "subnet-060b20ee750943f5e"] #CHANGE # subnets for Singapore
   #subnets = data.aws_subnet_ids.subnets.ids
-  vpc_id          = aws_default_vpc.default.id
+  vpc_id          = aws_default_vpc.default.id  // Picking up the default VPC of Singapore
   #vpc_id         = "vpc-1234556abcdef"
 
-  //Newly added entry to allow connection to the api server
-  //Without this change error in step 163 in course will not go away
+  # Newly added entry to allow connection to the api server, without this change the error will continue
   cluster_endpoint_public_access  = true
+
+  # Optional: Adds the current caller identity as an administrator via cluster access entry
+  enable_cluster_creator_admin_permissions = true
 
   eks_managed_node_group_defaults = {
     ami_type = "AL2023_x86_64_STANDARD"
-
   }
 
   eks_managed_node_groups = {
@@ -78,10 +79,10 @@ module "kalkey-cluster" {
       desired_size = 1
     }
   }
-
 }
-### Uncomment this section after cluster creation line numbers 88 to 115###
-#resource "kubernetes_cluster_role_binding" "example" {
+
+### Uncomment this section after cluster creation ###
+# resource "kubernetes_cluster_role_binding" "example" {
 #  metadata {
 #    name = "fabric8-rbac"
 #  }
@@ -97,7 +98,7 @@ module "kalkey-cluster" {
 #  }
 # }
 
-#resource "kubernetes_secret" "example" {
+# resource "kubernetes_secret" "example" {
 #  metadata {
 #    annotations = {
 #      "kubernetes.io/service-account.name" = "default"
@@ -107,9 +108,9 @@ module "kalkey-cluster" {
 #  }
 #
 #  type                           = "kubernetes.io/service-account-token"
-#  wait_for_service_account_token = true
+### wait_for_service_account_token = true // Not needed for Kubernetes provider version 1.11.3
 # }
-### Uncomment this section after cluster creation ###
+### Uncomment this section after cluster creation, except line no. 111 ###
 
 # Needed to set the default region
 provider "aws" {
